@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Opa! Sem pendências",
+  "version": "1.0",
+  "description": "Ajuda a lembrar de responder atendimentos não respondidos rapidamente",
+  "action": {
+    "default_popup": "hello.html",
+    "default_icon": "opa_sem_pendencias.png"
+  },
+  "permissions": [
+    "scripting"
+  ],
+  "host_permissions": [
+    "file:///home/gabrielweber/Documents/teste.html"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "file:///home/gabrielweber/Documents/teste.html"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "pegadoc.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}
