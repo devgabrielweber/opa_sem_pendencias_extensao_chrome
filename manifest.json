@@ -11,12 +11,12 @@
     "scripting"
   ],
   "host_permissions": [
-    "file:///home/gabrielweber/Documents/teste.html"
+    "https://suporte.ixcsoft.com.br/*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "file:///home/gabrielweber/Documents/teste.html"
+        "https://suporte.ixcsoft.com.br/*"
       ],
       "js": [
         "content.js"
