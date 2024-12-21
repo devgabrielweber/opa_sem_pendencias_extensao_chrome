@@ -16,7 +16,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://suporte.ixcsoft.com.br/*"
+        "https://suporte.ixcsoft.com.br/atendente/"
       ],
       "js": [
         "content.js"
