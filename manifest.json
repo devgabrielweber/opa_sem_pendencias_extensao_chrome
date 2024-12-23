@@ -8,30 +8,21 @@
     "default_icon": "opa_sem_pendencias.png"
   },
   "permissions": [
-    "scripting"
+    "scripting",
+    "http://localhost:8000/*"
   ],
   "host_permissions": [
-    "https://suporte.ixcsoft.com.br/*"
+    "http://localhost:8000/*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "https://suporte.ixcsoft.com.br/atendente/"
+        "http://localhost:8000/opa.html"
       ],
       "js": [
         "content.js"
       ],
       "run_at": "document_idle"
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "pegadoc.html"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
     }
   ]
 }

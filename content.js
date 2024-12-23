@@ -7,7 +7,7 @@ if (document.readyState === "loading") {
 }
 
 async function getDash() {
-    response = await fetch("https://suporte.ixcsoft.com.br/dashboards/attendant", {
+    response = await fetch("http://localhost:8000/opa-dash.html", {
         credentials: 'include'
     })
     responseText = await response.text()
@@ -50,7 +50,7 @@ function executarScript() {
             // iframe = document.getElementById('nextPage') //define a classe que quer pesquisar por
             // iframeDoc = iframe.contentDocument
             elem = htmlDash.querySelectorAll('[class="text-gray-1000 md:text-xl text-lg text-left font-bold truncate"]')
-            elem3 = htmlDash.querySelectorAll('[class="flex w-full items-center p-8 justify-start bg-background-secondary rounded-xl border border-gray-400 cursor-pointer"]')
+            elem3 = document.querySelectorAll('[class="flex w-full items-center p-8 justify-start bg-background-secondary rounded-xl border border-gray-400 cursor-pointer"]')
             console.log(elem[1])
             // } catch (error) {
             elem[1] = null
