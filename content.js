@@ -6,12 +6,36 @@ if (document.readyState === "loading") {
     executarScript();
 }
 
-async function getDash() {
-    response = await fetch("http://localhost:8000/opa-dash.html", {
-        credentials: 'include'
-    })
-    responseText = await response.text()
-    return responseText
+let indexPadrao = 1;
+
+async function geraDash() {
+    try {
+        const retornoMSG = await new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({ action: "inicia_monitoramento" }, (response) => {
+                if (chrome.runtime.lastError) {
+                    reject(chrome.runtime.lastError); // Trata erros
+                } else if (!response || !response[0].html) {
+                    reject(new Error("Resposta inválida ou vazia.")); // Verifica a resposta
+                } else {
+                    resolve(response); // Resolve a resposta
+                }
+            });
+        });
+
+        //console.log(retornoMSG)
+
+        dash = retornoMSG[0];
+        if (retornoMSG[1] == 'https://suporte.ixcsoft.com.br/dashboards/manager') {
+            indexPadrao = 2;
+        } else {
+            indexPadrao = 1;
+        }
+
+        //console.log(dash.html); // Exibe o HTML capturado
+        return dash.html;
+    } catch (error) {
+        console.error("Erro ao capturar o HTML:", error.message); // Trata erros
+    }
 }
 
 function executarScript() {
@@ -40,34 +64,49 @@ function executarScript() {
 
     intervaloVerificar = setInterval(() => {
 
-        let resposta = getDash().then((response) => {
+        //console.log(indexPadrao)
+
+        let resposta = geraDash().then((response) => {
 
             const parser = new DOMParser()
 
-            htmlDash = parser.parseFromString(response, "text/html")
+            htmlDash = parser.parseFromString(response, "text/html");
+            htmlDash2 = htmlDash.documentElement.outerHTML;
+            htmlDashFinal = parser.parseFromString(htmlDash2, "text/html");
+            //console.log(htmlDashFinal)
+            try {
+                iframe = document.getElementById('nextPage') //define a classe que quer pesquisar por
+                //console.log(iframe)
+                deuerroiframe = false
+                try {
+                    iframeDoc = iframe.contentDocument
+                } catch (e) {
+                    deuerroiframe = true
+                    //console.log('erro ao capturar aiframe!')
+                }
+                AguardandoAtendenteDash = htmlDashFinal.querySelectorAll('[class="text-gray-1000 md:text-xl text-lg text-left font-bold truncate"]')
+                const query = ''
+                if (deuerroiframe == false) {
+                    if (indexPadrao == 1) {
+                        aguardandoAtendendeIframe = iframeDoc.querySelectorAll("[class='flex w-full items-center p-8 justify-start bg-background-secondary rounded-xl border border-gray-400 cursor-pointer']")
+                    } else if (indexPadrao == 2) {
+                        aguardandoAtendendeIframe = iframeDoc.querySelectorAll('[class="flex w-full items-center p-8 justify-start bg-background-secondary rounded-xl border border-gray-400"]')
 
-            // try {
-            // iframe = document.getElementById('nextPage') //define a classe que quer pesquisar por
-            // iframeDoc = iframe.contentDocument
-            elem = htmlDash.querySelectorAll('[class="text-gray-1000 md:text-xl text-lg text-left font-bold truncate"]')
-            elem3 = document.querySelectorAll('[class="flex w-full items-center p-8 justify-start bg-background-secondary rounded-xl border border-gray-400 cursor-pointer"]')
-            console.log(elem[1])
-            // } catch (error) {
-            elem[1] = null
-            elem3[1] = null
-            // }
-            //console.log(iframeDoc)
-            elem2 = document.querySelector('[data-id="home"]'); //define a classe do ícone que quer modificar
+                    }
+                    aguardandoAtendendeIframe = iframeDoc.querySelectorAll(query)
+                } else {
+                    aguardandoAtendendeIframe[indexPadrao] = null
+                }
+                //console.log(AguardandoAtendenteDash[indexPadrao])
+            } catch (error) {
+                //console.log('erro ao capturar iframe')
+                AguardandoAtendenteDash[indexPadrao] = null
+                aguardandoAtendendeIframe[indexPadrao] = null
+            }
+            iconeHomeOpaPagPrincipal = document.querySelector('[data-id="home"]'); //define a classe do ícone que quer modificar
 
-            //console.log(elem2)
-            //console.log(elem[0])
-            if (elem[1] != null) { //se encontrar a classe
-
-                //aqui, lembrar que pode retornar mais de um elem, usar o index pra escolher o certo
-
-                //console.log('é diferente de null')
-                //console.log(elem[1].innerHTML)
-                if (parseFloat(elem[1].innerHTML) > 0) { //se o valor for maior que zero
+            if (AguardandoAtendenteDash[indexPadrao] != null) { //se encontrar a classe
+                if (parseFloat(AguardandoAtendenteDash[indexPadrao].innerHTML) > 0) { //se o valor for maior que zero
                     maior_q_zero = true //maior que zero = true
                 } else { // se for menor ou igual a zero
                     maior_q_zero = false //maior que zero = false
@@ -75,10 +114,9 @@ function executarScript() {
             }
 
             if (maior_q_zero == true) { // se maior que zero = true
-                //console.log('é maior que zero')
                 //pode replicar o código abaixo para outros elementos,
                 //mas é necessário busca-lo no inicio do cod
-                elem2.animate([ //animar o ícone
+                iconeHomeOpaPagPrincipal.animate([ //animar o ícone
                     { backgroundColor: 'red' },
                     { transform: 'translateX(0)' },
                     { transform: 'translateX(-5px)' },
@@ -101,8 +139,8 @@ function executarScript() {
                     duration: 1500,//obrigatório, recomendo deixar como a duração do loop para não cortar a animação
                     iterations: 1
                 })
-                if (elem3[1] != null) {
-                    elem3[1].animate([ //animar o ícone
+                if (aguardandoAtendendeIframe[indexPadrao] != null) {
+                    aguardandoAtendendeIframe[indexPadrao].animate([ //animar o ícone
                         { backgroundColor: 'red' },
                         { transform: 'translateX(0)' },
                         { transform: 'translateX(-5px)' },
@@ -131,13 +169,12 @@ function executarScript() {
                     document.body.appendChild(popup)
                 }
             } else {
-                elem2.class = 'item'
+                //iconeHomeOpaPagPrincipal.class = 'item'
                 //console.log('pausou!')
-            }
+            } https://docs.google.com/spreadsheets/d/1ow4FstI_I_kzBd1ib8MGXq-SZ37J1M2T8004u_MhH2I/edit?gid=0#gid=0
             popupTimeout += 1
 
             return response
         })
     }, 1500) //faz essa verificação a cada 1,5s, pode alterar, mas não recomedo (pode ser que a animação corte)
-
 }

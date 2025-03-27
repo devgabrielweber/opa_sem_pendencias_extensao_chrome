@@ -9,20 +9,23 @@
   },
   "permissions": [
     "scripting",
-    "http://localhost:8000/*"
+    "tabs"
   ],
   "host_permissions": [
-    "http://localhost:8000/*"
+    "https://suporte.ixcsoft.com.br/*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "http://localhost:8000/opa.html"
+        "https://suporte.ixcsoft.com.br/atendente/"
       ],
       "js": [
         "content.js"
       ],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
 }
